@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'course.apps.CourseConfig',
     'group',
     'payment',
-    'roles',
+    # 'roles',
     'users',
 
 ]

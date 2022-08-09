@@ -34,7 +34,7 @@ class BaseModel(Model):
 
 
 class DeleteModel(Model):
-    is_delete = BooleanField(default=False)
+    draft = BooleanField(default=False)
 
     objects = DeleteManager()
 
@@ -42,5 +42,5 @@ class DeleteModel(Model):
         abstract = True
 
     def delete(self, **kwargs):
-        self.is_delete = True
+        self.draft = True
         self.save()

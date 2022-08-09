@@ -2,10 +2,9 @@ from secrets import choice
 from django.db import models
 from center.models import Center
 from shared.django.model import BaseModel
-from users.models import User
+from users.models import User, random_number
 from branch.models import Branch
 
-from roles.models import random_number
 
 CASH = 'Naqd'
 PLASTIC_CARD = 'Plastik kartochka'
