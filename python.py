@@ -43,5 +43,5 @@ last_month = datetime.datetime.now().month-1
 center = Center.objects.get(id=1)
 # print(center.courses.all())
 
-teachers = center.
-# print(teachers.name)
+payment_history = center.payment_history.all()
+print(payment_history)

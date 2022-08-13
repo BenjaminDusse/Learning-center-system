@@ -57,6 +57,7 @@ def learning_center(request):
     center = Center.objects.get(id=1)
     courses = center.courses.all()
     groups = center.group.all()
-    teachers = center.user_group.filter(role="teacher")
-    students = center.courses.group.user_group.filter(role="student")
-        
+    teachers = center.user_group.filter(role="teacher") # !!!
+    students = center.courses.group.user_group.filter(role="student") # !!!
+    payment_history = center.payment_history.all()
+    # organish bitta model yaratilganda avtomatik boshqa model yaratilib ketishi kerak

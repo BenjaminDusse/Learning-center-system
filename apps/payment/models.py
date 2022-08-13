@@ -6,17 +6,6 @@ from users.models import User, random_number
 from branch.models import Branch
 
 
-CASH = 'Naqd'
-PLASTIC_CARD = 'Plastik kartochka'
-MONEY_TRANSFER = "Pul o'tkazish"
-
-PAYMENT_TYPE = (
-    (CASH, "Cash"),
-    (PLASTIC_CARD, "Plastic Card"),
-    (MONEY_TRANSFER, "Money Transfer")
-)
-
-
 class Payment_type(BaseModel):
     monthly_bill = models.ForeignKey(
         'payment.Monthly_Bill', on_delete=models.PROTECT, related_name='payment_type')
@@ -27,9 +16,17 @@ class Payment_type(BaseModel):
 
 
 class Payment_history(BaseModel):
-    payment_number = models.CharField(max_length=7, unique=True)
-    payment_type = models.OneToOneField(
-        Payment_type, on_delete=models.SET_NULL, null=True)
+    CASH = 'Naqd'
+    PLASTIC_CARD = 'Plastik kartochka'
+    MONEY_TRANSFER = "Pul o'tkazish"
+
+    PAYMENT_TYPE = (
+        (CASH, "Cash"),
+        (PLASTIC_CARD, "Plastic Card"),
+        (MONEY_TRANSFER, "Money Transfer")
+    )
+    payment_number = models.CharField(max_length=7, unique=True, blank=True)
+    payment_type = models.CharField(max_length=200, choices=PAYMENT_TYPE)
     # kalla kere maqsad kimgadur tolidi pulni shuni hal qilish kere
     price = models.FloatField()
     learning_center = models.ForeignKey(
