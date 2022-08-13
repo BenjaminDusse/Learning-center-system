@@ -69,22 +69,22 @@ class Monthly_Bill(BaseModel):
         return self.name
 
 
-class Income(BaseModel):
-    center = models.ForeignKey(Center, on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=200)
-    payment_type = models.CharField(max_length=200, choices=PAYMENT_TYPE)
-    price = models.FloatField()
+# class Income(BaseModel):
+#     center = models.ForeignKey(Center, on_delete=models.SET_NULL, null=True)
+#     name = models.CharField(max_length=200)
+#     payment_type = models.CharField(max_length=200, choices=PAYMENT_TYPE)
+#     price = models.FloatField()
 
-    def __str__(self):
-        return f"{self.name} {self.price}"
+#     def __str__(self):
+#         return f"{self.name} {self.price}"
 
 
-class Outcome(BaseModel):
-    center = models.ForeignKey(Center, on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=200)
-    payment_type = models.OneToOneField(
-        Payment_type, on_delete=models.PROTECT, related_name='outcome')
-    price = models.FloatField()
+# class Outcome(BaseModel):
+#     center = models.ForeignKey(Center, on_delete=models.SET_NULL, null=True)
+#     name = models.CharField(max_length=200)
+#     payment_type = models.OneToOneField(
+#         Payment_type, on_delete=models.PROTECT, related_name='outcome')
+#     price = models.FloatField()
 
-    def __str__(self):
-        return f"{self.name} {self.price}"
+#     def __str__(self):
+#         return f"{self.name} {self.price}"

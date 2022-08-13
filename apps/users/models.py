@@ -4,8 +4,10 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
+from shared.django import model
 from shared.django.model import BaseModel, DeleteModel
 from users.validators import validate_file_extension
+from course.models import Course
 
 
 phone_regex = RegexValidator(
@@ -14,15 +16,6 @@ phone_regex = RegexValidator(
 
 def random_number():
     return str(random.randint(1000000, 9999999))
-
-
-WORKING = 'Working'
-NOT_WORKING = 'Not Working'
-
-STATUS_CHOICES = (
-    (WORKING, "Working"),
-    (NOT_WORKING, "Not Working"),
-)
 
 
 class User(AbstractUser):
@@ -51,39 +44,7 @@ class User(AbstractUser):
         (MALE, 'Male'),
         (FEMALE, 'Female')
     )
-    roles = models.ManyToManyField('users.Role', blank=True)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES)
-    username = models.CharField(max_length=255, unique=True, db_index=True)
-    first_name = models.CharField(max_length=100, blank=True, null=True)
-    last_name = models.CharField(max_length=100, blank=True, null=True)
-    phone_number = models.CharField(
-        validators=[phone_regex], max_length=12, blank=True)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
-    email = models.EmailField(blank=True, null=True)
-    language = models.CharField(
-        max_length=25, choices=LANGUAGES_CHOICES, blank=True, null=True, default=EN)
-    theme = models.CharField(
-        max_length=24, choices=THEMES_CHOICES, default=DARK, blank=True, null=True)
-    date_of_birth = models.DateTimeField(auto_now_add=True)
-    address = models.CharField(max_length=250, null=True, blank=True)
 
-    def __str__(self):
-        return self.username
-
-    @property
-    def fullname(self):
-        return f'{self.first_name} {self.last_name}'
-
-    class Meta:
-        ordering = ['-id']
-
-    def save(self, *args, **kwargs):
-        # if self.date_of_birth:
-        #     self.date_of_birth = self.date_of_birth.strftime("%-d %B %Y")
-        super(User, self).save(*args, **kwargs)
-
-
-class Role(BaseModel, DeleteModel):
     ROLE_CHOICES = (
         ("admin", "admin"),
         ("student", "student"),
@@ -91,42 +52,34 @@ class Role(BaseModel, DeleteModel):
         ("staff", "staff"),
     )
 
-    owner = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='user_roles')
-    groups = models.ManyToManyField('auth.Group')
-    unique_name = models.CharField(max_length=255, choices=ROLE_CHOICES)
+    language = models.CharField(
+        max_length=2, choices=LANGUAGES_CHOICES, default=UZ)
+    theme = models.CharField(
+        max_length=5, choices=THEMES_CHOICES, default=LIGHT)
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+    group = models.ForeignKey(
+        'UserGroup', on_delete=models.CASCADE, related_name='user_group', blank=True, null=True)
     saldo = models.IntegerField(
         help_text='loan and salary', null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+
+    @property
+    def fullname(self):
+        return f'{self.first_name} {self.last_name} Username: {self.username}'
 
     class Meta:
-        ordering = ('-modified_date', )
+        ordering = ['-id']
 
     def __str__(self):
-        return f"{self.title}"
+        return self.fullname
 
 
-class UserActivity(models.Model):
-    # Login Status
-    LOGGED_IN = 'LOGGED_IN'
-    LOGGED_OUT = 'LOGGED_OUT'
-    LOGIN_FAILED = 'LOGIN_FAILED'
-
-    ACTION = (
-        (LOGGED_IN, 'LOGGED_IN'),
-        (LOGGED_OUT, 'LOGGED_OUT'),
-        (LOGIN_FAILED, 'LOGIN_FAILED')
-    )
-
-    ip = models.GenericIPAddressField(null=True, blank=True)
-    login_datetime = models.DateTimeField(auto_now=True)
-    action = models.CharField(max_length=12, default=LOGGED_IN, choices=ACTION)
-    user_agent_info = models.CharField(max_length=255, null=True, blank=True)
-
-    user = models.ForeignKey('users.User', on_delete=models.SET_NULL,
-                             related_name='users_login', null=True, blank=True)
+class UserGroup(BaseModel):
+    name = models.CharField(max_length=200)
+    capacity = models.IntegerField(default=0)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='group')
 
     def __str__(self):
-        return self.user.contact.full_name
+        return self.name
 
-    class Meta:
-        ordering = ('-id',)
+
